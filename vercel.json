@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/api/proxy/(.*)",
+      "destination": "https://api.open-meteo.com/$1"
+    }
+  ]
+}
