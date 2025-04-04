@@ -1,6 +1,6 @@
 // api/proxy.js
 export default async function handler(req, res) {
-  const API_DOMAIN = "https://api.open-meteo.com";
+  const API_DOMAIN = "https://api.open-meteo.com/";
   // Sử dụng req.url để lấy phần path và query; cần một base dummy vì req.url chỉ chứa path
   const url = new URL(req.url, "http://dummy-base");
   const proxyUrl = API_DOMAIN + url.pathname + url.search;
