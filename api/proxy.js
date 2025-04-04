@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   try {
     // Lấy query string từ URL request và nối với domain API mục tiêu
     const { search } = new URL(req.url, `http://${req.headers.host}`);
-    const targetUrl = "https://api.open-meteo.com" + search;
+    const targetUrl = "https://api.open-meteo.com/" + search;
 
     // Gửi request đến API mục tiêu
     const response = await fetch(targetUrl);
