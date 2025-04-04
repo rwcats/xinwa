@@ -1,18 +1,27 @@
-// api/proxy.js
 export default async function handler(req, res) {
-  const API_DOMAIN = "https://api.open-meteo.com/";
-  // Sử dụng req.url để lấy phần path và query; cần một base dummy vì req.url chỉ chứa path
-  const url = new URL(req.url, "http://dummy-base");
-  const proxyUrl = API_DOMAIN + url.pathname + url.search;
+  // Chỉ cho phép các request GET
+  if (req.method !== "GET") {
+    res.status(405).send("Method Not Allowed");
+    return;
+  }
+
   try {
-    const response = await fetch(proxyUrl);
+    // Lấy query string từ URL request và nối với domain API mục tiêu
+    const { search } = new URL(req.url, `http://${req.headers.host}`);
+    const targetUrl = "https://api.open-meteo.com" + search;
+
+    // Gửi request đến API mục tiêu
+    const response = await fetch(targetUrl);
     if (!response.ok) {
-      res.status(500).json({ error: "Fetch failed" });
+      res.status(response.status).send("Error fetching data from target API");
       return;
     }
-    const data = await response.json();
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching data: " + err.message });
+    const data = await response.text();
+
+    // Trả về kết quả với Content-Type phù hợp
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
   }
 }
